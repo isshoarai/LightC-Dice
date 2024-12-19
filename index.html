@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Dice Roller</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+        }
+        .container {
+            display: flex;
+            flex: 1;
+        }
+        .left, .right {
+            width: 25%;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .middle {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ccc;
+            flex-direction: column;
+        }
+        #description-text {
+            width: 60%; /* 設定寬度為視窗的 60% */
+            max-width: 70%; /* 最大寬度為 70% */
+}
+        .history-entry {
+            margin-bottom: 10px;
+        }
+        button, select, textarea {
+            margin: 5px;
+            padding: 5px;
+            font-size: 1rem;
+        }
+        h3, h4 {
+            margin: 5px 0;
+        }
+        .dice-item {
+            cursor: pointer;
+            margin: 5px 0;
+            font-weight: bold;
+        }
+		.middle .name {
+            font-size: 3rem; /* 保持大字體 */
+            font-weight: bold; /* 確保字體加粗 */
+            margin-bottom: 30px; /* 增加名稱與按鈕的間距 */
+        }
+
+        .middle button {
+            margin: 30px 0; /* 上下按鈕間距 */
+            padding: 10px 20px; /* 按鈕內部間距 */
+           font-size: 1.2rem; /* 按鈕字體大小 */
+        }
+
+        .middle .result {
+            font-size: 2rem; /* 骰面描述字體大小 */
+            margin-top: 30px; /* 增加按鈕與結果的間距 */
+        }
+        .calendar {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        #calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr); /* 每行 7 列，對應一周 */
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        #calendar-grid div {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            background-color: #fff;
+        }
+
+        #calendar-grid div:hover {
+            background-color: #f0f0f0; /* 滑鼠懸停效果 */
+        }
+
+        /* 為有註解的日期新增樣式 */
+        #calendar-grid div.has-note {
+            background-color: red; /* 紅色背景 */
+            color: white; /* 白色文字 */
+            font-weight: bold; /* 加粗字體 */
+            border: 1px solid #cc0000; /* 深紅色邊框 */
+}
+        .selected {
+            background-color: #d0f0d0;
+        }
+
+        .history-entry .note {
+            cursor: pointer; /* 懸停時顯示手指圖示 */
+            color: blue; /* 可選，讓註解文字更顯眼 */
+            text-decoration: underline; /* 可選，增加可點擊感 */
+        }
+
+        .history-entry .note:hover {
+            text-decoration: none; /* 懸停時取消下劃線 */
+}
+    </style>
+</head>
+<body>
+    <!-- 功能列 -->
+    <div class="header">
+        <button id="add-die">Add New Die</button>
+        <button id="modify-die">Modify Die</button>
+        <input type="file" id="import-history" accept=".json" style="display:none;">
+        <button onclick="document.getElementById('import-history').click()">Import History</button>
+        <button id="export-history">Export History</button>
+		<input type="file" id="import-txt" accept=".txt" style="display:none;">
+        <button onclick="document.getElementById('import-txt').click()">Import from TXT</button>
+		<button id="export-txt">Export to TXT</button>
+    </div>
+
+    <!-- 主區塊 -->
+    <div class="container">
+        <!-- 左側：骰子列表 -->
+        <div class="left">
+            <h3>Custom Dice</h3>
+            <div id="dice-list"></div>
+        </div>
+
+        <!-- 中間：擲骰區塊 -->
+        <div class="middle" id="result-display">
+            <div class="name">Select a Die</div>
+            <button id="roll-die" style="display:none;">Roll</button>
+            <div class="result"></div>
+        </div>
+
+        <!-- 右側：歷史記錄 -->
+        <div class="right">
+            <h3>History</h3>
+            <div id="history"></div>
+            <div>
+                <button id="prev-page" onclick="changePage(-1)">Previous</button>
+                <button id="next-page" onclick="changePage(1)">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 下方：描述區塊 -->
+        <div id="description-section">
+            <h4 id="description-title">Note for 擲骰記錄名稱</h4>
+            <div id="description-time" style="font-size: 0.8rem; color: gray;">(時間戳記)</div> <!-- 新增時間戳 -->
+            <textarea id="description-text" rows="4" cols="50" placeholder="Enter description here..."></textarea>
+            <button id="save-description">Save Description</button>
+        </div>
+
+	<div class="calendar">
+    <h4>Game Calendar</h4>
+    <div>
+        <label for="year-select">Year:</label>
+        <select id="year-select"></select>
+        <label for="month-select">Month:</label>
+        <select id="month-select"></select>
+    </div>
+    <div id="calendar-grid"></div>
+</div>
+
+
+    <script src="script.js"></script>
+</body>
+</html>
